@@ -1,5 +1,7 @@
 package com.example.hw8_5.ui.weather;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,15 +9,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.hw8_5.R;
-import com.example.hw8_5.ui.gallery.GalleryViewModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +42,11 @@ public class WeatherFragment extends Fragment {
     Button searchButton, myLocation, showMap;
     String getURL = "";
 
+    private static final int REQUEST_CODE_PERMISSION = 2;
+    String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
+    // GPSTracker class
+    GPSTracker gps;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +61,20 @@ public class WeatherFragment extends Fragment {
 
             }
         });
+
+        try {
+            if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), mPermission)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(getActivity(), new String[]{mPermission},
+                        REQUEST_CODE_PERMISSION);
+
+                // If any permission above not allowed by user, this condition will
+                //execute every time, else your else part will work
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         thePlace = (TextView)root.findViewById(R.id.thePlace);
         description = (TextView)root.findViewById(R.id.description);
@@ -85,6 +107,36 @@ public class WeatherFragment extends Fragment {
                     getWeather(theURL);
                     //showMap.setVisibility(View.VISIBLE);
                 }
+
+            }
+        });
+
+        myLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // create class object
+                        gps = new GPSTracker(getActivity().getApplicationContext());
+
+                        // check if GPS enabled
+                        if(gps.canGetLocation()){
+
+                            double latitude = gps.getLatitude();
+                            double longitude = gps.getLongitude();
+
+                            // \n is for new line
+                            Toast.makeText(getActivity().getApplicationContext(), "Your Location is - \nLat: "
+                                    + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+
+                            String theURL = "https://api.openweathermap.org/data/2.5/weather?lat="+latitude+"&lon="+longitude+"&appid=1b8fe95bda81875bd8dc9263cfd58b13";
+                            getWeather(theURL);
+                            //showMap.setVisibility(View.VISIBLE);
+                        }else{
+                            // can't get location
+                            // GPS or Network is not enabled
+                            // Ask user to enable GPS/network in settings
+                            gps.showSettingsAlert();
+                        }
 
             }
         });
