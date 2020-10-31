@@ -11,7 +11,7 @@ public class WeatherViewModel extends ViewModel {
 
     public WeatherViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is weather fragment");
+        mText.setValue("Brandon Michael Que Z23479912");
     }
 
     public LiveData<String> getText() {
