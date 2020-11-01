@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.weather.WeatherFragment"
-    android:background="#B3000000">
+    android:background="#99000000">
 
     <TextView
         android:id="@+id/theLongitude"
@@ -204,5 +204,15 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/feelsLike"
         app:layout_constraintTop_toBottomOf="@+id/theLow" />
+
+    <Button
+        android:id="@+id/speakButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Speak"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/theLatitude" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

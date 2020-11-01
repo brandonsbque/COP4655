@@ -3,6 +3,7 @@ package com.example.hw8_5.ui.weather;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.util.Locale;
+
 
 public class WeatherFragment extends Fragment {
 
@@ -46,6 +49,10 @@ public class WeatherFragment extends Fragment {
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
     // GPSTracker class
     GPSTracker gps;
+
+    //texttospeech
+    TextToSpeech t1;
+    Button speakButton;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -90,6 +97,7 @@ public class WeatherFragment extends Fragment {
         userInput = (EditText)root.findViewById(R.id.userInput);
         searchButton = (Button)root.findViewById(R.id.searchButton);
         myLocation = (Button)root.findViewById(R.id.myLocation);
+        speakButton = (Button)root.findViewById(R.id.speakButton);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,7 +149,33 @@ public class WeatherFragment extends Fragment {
             }
         });
 
+        t1=new TextToSpeech(getActivity().getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    t1.setLanguage(Locale.US);
+                }
+            }
+        });
+
+       speakButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String toSpeak = temp.getText().toString();
+                Toast.makeText(getActivity().getApplicationContext(), toSpeak,Toast.LENGTH_SHORT).show();
+                t1.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
+
         return root;
+    }
+
+    public void onPause(){
+        if(t1 !=null){
+            t1.stop();
+            t1.shutdown();
+        }
+        super.onPause();
     }
 
     public void getWeather(String theURL){
