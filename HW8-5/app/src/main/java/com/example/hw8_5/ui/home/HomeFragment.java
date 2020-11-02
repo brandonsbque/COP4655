@@ -1,5 +1,6 @@
 package com.example.hw8_5.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.hw8_5.R;
+import com.example.hw8_5.ui.weather.WeatherFragment;
 
 public class HomeFragment extends Fragment {
 
@@ -30,6 +32,8 @@ public class HomeFragment extends Fragment {
                 textView.setText(s);
             }
         });
+
+
         return root;
     }
 }

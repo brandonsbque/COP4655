@@ -1,6 +1,7 @@
 package com.example.hw8_5.ui.weather;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.hw8_5.MainActivity;
 import com.example.hw8_5.R;
 
 import org.json.JSONArray;
@@ -31,6 +33,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.hw8_5.ui.gallery.GalleryFragment;
+import com.example.hw8_5.ui.home.HomeFragment;
+import com.example.hw8_5.ui.slideshow.SlideshowFragment;
 
 import java.util.Locale;
 
@@ -39,7 +44,7 @@ public class WeatherFragment extends Fragment {
 
     private WeatherViewModel weatherViewModel;
 
-   TextView thePlace, description, temp, theHigh, theLow, feelsLike, humidity, visibility, windSpeed, theLatitude, theLongitude;
+    TextView thePlace, description, temp, theHigh, theLow, feelsLike, humidity, visibility, windSpeed, theLatitude, theLongitude;
     String longitudeValue, latitudeValue, theLocation;
     EditText userInput;
     Button searchButton, myLocation, showMap;
@@ -53,6 +58,11 @@ public class WeatherFragment extends Fragment {
     //texttospeech
     TextToSpeech t1;
     Button speakButton;
+
+    //intent stuff
+    public static final String transferLat = "com.example.hw8_5.ui.weather.latitudeValue";
+    public static final String transferLon = "com.example.hw8_5.ui.weather.longitudeValue";
+    public static final String transferLocation = "com.example.hw8_5.ui.weather.theLocation";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -99,6 +109,7 @@ public class WeatherFragment extends Fragment {
         myLocation = (Button)root.findViewById(R.id.myLocation);
         speakButton = (Button)root.findViewById(R.id.speakButton);
 
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,11 +119,13 @@ public class WeatherFragment extends Fragment {
                 if(Utility.numberOrNot(getURL)){
                     String theURL = "https://api.openweathermap.org/data/2.5/weather?zip="+getURL+"&appid=1b8fe95bda81875bd8dc9263cfd58b13";
                     getWeather(theURL);
+                    //transferDataToHistory();
                     //showMap.setVisibility(View.VISIBLE);
                 }
                 else{
                     String theURL = "https://api.openweathermap.org/data/2.5/weather?q="+getURL+"&appid=1b8fe95bda81875bd8dc9263cfd58b13";
                     getWeather(theURL);
+                    //transferDataToHistory();
                     //showMap.setVisibility(View.VISIBLE);
                 }
 
@@ -138,6 +151,7 @@ public class WeatherFragment extends Fragment {
 
                             String theURL = "https://api.openweathermap.org/data/2.5/weather?lat="+latitude+"&lon="+longitude+"&appid=1b8fe95bda81875bd8dc9263cfd58b13";
                             getWeather(theURL);
+                            //transferDataToHistory();
                             //showMap.setVisibility(View.VISIBLE);
                         }else{
                             // can't get location
@@ -167,8 +181,21 @@ public class WeatherFragment extends Fragment {
             }
         });
 
+
+
+
         return root;
     }
+
+    public void transferDataToHistory(){
+        Intent intent = new Intent(getActivity(), SlideshowFragment.class);
+        intent.putExtra(transferLat, longitudeValue);
+        intent.putExtra(transferLon, longitudeValue);
+        intent.putExtra(transferLocation, theLocation);
+        //startActivity(intent);
+    }
+
+
 
     public void onPause(){
         if(t1 !=null){
@@ -196,15 +223,15 @@ public class WeatherFragment extends Fragment {
 
                     String theTemp = String.valueOf(mainObject.getDouble("temp"));
                     String theDescription = object.getString("description");
-                    String theLocation = response.getString("name");
+                    theLocation = response.getString("name");
                     String tempMin = String.valueOf(mainObject.getDouble("temp_min"));
                     String tempMax = String.valueOf(mainObject.getDouble("temp_max"));
                     String theFeelsLike = String.valueOf(mainObject.getDouble("feels_like"));
                     String theHumidity = String.valueOf(mainObject.getDouble("humidity"));
                     String theVisibility = response.getString("visibility");
                     String theWindSpeed = String.valueOf(windObject.getDouble("speed"));
-                    String longitudeValue = String.valueOf(coordObject.getDouble("lon"));
-                    String latitudeValue = String.valueOf(coordObject.getDouble("lat"));
+                    longitudeValue = String.valueOf(coordObject.getDouble("lon"));
+                    latitudeValue = String.valueOf(coordObject.getDouble("lat"));
 
 
 
@@ -252,6 +279,7 @@ public class WeatherFragment extends Fragment {
                     theLongitude.setText("Lon: "+longitudeValue);
                     theLatitude.setText("Lat: "+latitudeValue);
 
+                    transferDataToHistory();
 
                 } catch(JSONException theError){
                     theError.printStackTrace();
