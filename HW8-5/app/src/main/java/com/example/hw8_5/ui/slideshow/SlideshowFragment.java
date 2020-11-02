@@ -48,8 +48,8 @@ public class SlideshowFragment extends Fragment {
         String theLongitudeValue = intent.getStringExtra(WeatherFragment.transferLon);
         String theLocationValue = intent.getStringExtra(WeatherFragment.transferLocation);
 
-        latitudeValue = Double.parseDouble(theLatitudeValue);
-        longitudeValue = Double.parseDouble(theLongitudeValue);
+        /*latitudeValue = Double.parseDouble(theLatitudeValue);  //this is what makes the app crash because the intents above get NULL
+        longitudeValue = Double.parseDouble(theLongitudeValue); */
 
         theLatitude.setText(String.valueOf(latitudeValue));
         theLongitude.setText(String.valueOf(longitudeValue));

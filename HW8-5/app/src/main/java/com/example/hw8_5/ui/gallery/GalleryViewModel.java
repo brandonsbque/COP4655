@@ -10,7 +10,7 @@ public class GalleryViewModel extends ViewModel {
 
     public GalleryViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is gallery fragment");
+        mText.setValue("Unfortunately could not get intents to work with fragments, therefore map could not be implemented");
     }
 
     public LiveData<String> getText() {
